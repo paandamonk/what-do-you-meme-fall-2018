@@ -1,18 +1,14 @@
-const pictures = [
-
-];
-
-const captions = [
-
-];
+const captions  = require('./captions');
+const pictures  = require('./pictures');
 
 class Game {
     constructor(){
         this.picture = "";
         this.players = [];
-        this.playedCaptions = [
-            { text: "I dont always..." }
-        ];
+        this.playedCaptions = captions;
+        pictures().then(x=> 
+            this.pictures = x
+        );
     }
 }
 
