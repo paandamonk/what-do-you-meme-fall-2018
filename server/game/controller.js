@@ -14,20 +14,23 @@ app.get("/captions/:id", function(req, res){
 })
 
 app.post('/players', (req, res) => {
-    const player = new Player(req.body.name);
+    const player = new Player(req.body.name, game.players.length);
     game.players.push(player);
     res.send(player);
 })
 app.post('/picture', (req, res) => {
-    game.flipPicture();
+    var playerId = req.header("playerId");
+    game.flipPicture(playerId);
     res.send(game.picture);
 })
 app.post('/playedCaptions', (req, res) => {
-    let newCard = game.submitCaption(req.body.playerId, req.body.text )
+    var playerId = req.header("playerId");
+    let newCard = game.submitCaption(playerId, req.body.text )
     res.send(newCard);
 })
 app.post('/playedCaptions/choose', (req, res) => {
-    game.chooseCaption( req.body.text);
+    var playerId = req.header("playerId");
+    game.chooseCaption(playerId, req.body.text);
     res.send(req.body.text);
 })
 
