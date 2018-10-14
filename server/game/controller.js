@@ -7,7 +7,7 @@ const app = express.Router();
 
 
 app.get("/", function(req, res){
-    res.send(game);
+    res.send({...game, playedCaptions: game.getPlayedCaptions()});
 })
 app.get("/captions/:id", function(req, res){
     res.send(game.players[req.params.id].captions());
