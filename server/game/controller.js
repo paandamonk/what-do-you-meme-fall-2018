@@ -22,5 +22,13 @@ app.post('/picture', (req, res) => {
     game.flipPicture();
     res.send(game.picture);
 })
+app.post('/playedCaptions', (req, res) => {
+    let newCard = game.submitCaption(req.body.playerId, req.body.text )
+    res.send(newCard);
+})
+app.post('/playedCaptions/choose', (req, res) => {
+    game.chooseCaption( req.body.text);
+    res.send(req.body.text);
+})
 
 module.exports = app;
