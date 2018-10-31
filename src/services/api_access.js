@@ -1,4 +1,4 @@
-const api_root = "http://localhost:80/game";
+const api_root = "http://localhost:3000/game";
 let playerId = 0;
 
 export function GetState(){
