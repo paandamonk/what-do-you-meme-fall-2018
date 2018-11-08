@@ -24,7 +24,9 @@
             <div class="card" >
                 <h5 class="card-header">My Captions</h5>
                 <ul class="list-group list-group-flush">
-                    <li v-for="c in myCaptions" :key="c" class="list-group-item">{{c}}</li>
+                    <li v-for="c in myCaptions" :key="c"
+                        @click.prevent="submitCaption(c)"
+                        class="list-group-item">{{c}}</li>
                 </ul>
             </div>
         </div>
@@ -39,7 +41,15 @@
             <div class="card" >
                 <h5 class="card-header">Played Captions</h5>
                 <ul class="list-group list-group-flush">
-                    <li v-for="c in state.playedCaptions" :key="c.text" class="list-group-item">{{c}}</li>
+                    <li v-for="c in state.playedCaptions" :key="c.text"
+                        class="list-group-item">
+                        {{c.text }}
+                        <div>
+                            <a  v-if="isDealer"
+                                @click.prevent="chooseCaption(c)"
+                                class="btn btn-primary btn-sm">Choose</a>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -63,10 +73,11 @@
 </style>
 
 <script>
-import { GetState, FlipPicture, GetMyCaptions, Login, playerId } from '@/services/api_access';
+import * as api from '@/services/api_access';
+let loopTimer = null;
 
 export default {
-    data: function(){
+    data(){
         return {
             state: {
                 picture: "",
@@ -74,27 +85,43 @@ export default {
                 playedCaptions: [],
             },
             myCaptions: [],
-            //playerId: null
         }
     },
-    created: function(){
-        this.refresh();
+    created(){
+        loopTimer = setInterval(this.refresh, 1000);
+        if(api.playerId !== null && this.myCaptions.length == 0){
+            api.GetMyCaptions().then(x=> this.myCaptions = x)
+        }
     },
     methods: {
         refresh(){
-            GetState()
+            api.GetState()
             .then(x=> this.state = x)
         },
-        flipPicture: function(){
-            FlipPicture()
-            .then(()=> this.refresh())
+        flipPicture(){
+            api.FlipPicture()
         },
-        login: function() {
-            Login(prompt('What is your name?'))
-            .then(()=>  GetMyCaptions().then(x=> this.myCaptions = x) )
-            .then(()=> this.refresh())
+        login() {
+            api.Login(prompt('What is your name?'))
+            .then(()=> api.GetMyCaptions().then(x=> this.myCaptions = x) )
         },
-        playerId: ()=> playerId
+        submitCaption(c){
+            api.SubmitCaption(c)
+            .then(x=> {
+                this.myCaptions.splice(this.myCaptions.indexOf(c), 1);
+                this.myCaptions.push(x[0]);
+            })
+        },
+        chooseCaption(c){
+            api.ChooseCaption(c)
+        },
+
+        playerId: ()=> api.playerId
+    },
+    computed: {
+        isDealer(){
+            return this.playerId() == this.state.dealerId;
+        }
     }
 }
 </script>

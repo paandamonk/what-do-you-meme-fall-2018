@@ -19,13 +19,13 @@ class Game {
 
     getPlayedCaptions(){
         if(this.playedCaptions.some(x=> x.isChosen)){
-            return  this.playedCaptions.map(x=> ({ ...x, playerName: this.players[x.playerId].name }));;
+            return  this.playedCaptions.map(x=> ({ ...x, playerName: this.players[x.playerId].name }));
         }else{
             return this.playedCaptions.map(x=> ({ ...x, playerId: null }));
         }
     }
     flipPicture(playerId){
-        //if(!this.isDealer(playerId)) { throw new Error("Only the dealer can flip a picture")}
+        if(!this.isDealer(playerId)) { throw new Error("Only the dealer can flip a picture")}
         this.picture = pictures[(iPicture++) % pictures.length];
     }
     submitCaption(playerId, text){
